@@ -34,7 +34,7 @@ def main():
     noise_level_img = 0
     noise_level_model       = noise_level_img       # set noise level of model, default: 0
     model_name              = 'diffusion_ffhq_10m'  # diffusion_ffhq_10m, 256x256_diffusion_uncond; set diffusino model
-    testset_name            = 'demo_test'            # set testing set,  'imagenet_val' | 'ffhq_val'
+    testset_name            = 'test1'            # set testing set,  'imagenet_val' | 'ffhq_val'
     num_train_timesteps     = 1000
     iter_num                = 100                # set number of iterations
     iter_num_U              = 1                 # set number of inner iterations, default: 1
@@ -48,7 +48,7 @@ def main():
     border                  = 0
 	
     sigma                   = max(0.001,noise_level_img)  # noise level associated with condition y
-    lambda_                 = 1.0               # key parameter lambda
+    lambda_                 = 15.0               # key parameter lambda
     sub_1_analytic          = True              # use analytical solution
     
     log_process             = False
@@ -57,14 +57,14 @@ def main():
     generate_mode           = 'DiffPIR'         # DiffPIR; DPS; vanilla
     skip_type               = 'quad'            # uniform, quad
     eta                     = 0.0               # eta for ddim sampling
-    zeta                    = 0.1  
+    zeta                    = 0.5
     guidance_scale          = 1.0   
 
     calc_LPIPS              = False
     use_DIY_kernel          = True
-    blur_mode               = 'motion'          # Gaussian; motion
-    kernel_size             = 21
-    kernel_std              = 1.5 if blur_mode == 'Gaussian' else 0.5
+    blur_mode               = 'Gaussian'          # Gaussian; motion
+    kernel_size             = 61
+    kernel_std              = 3. if blur_mode == 'Gaussian' else 0.5
 
     sf                      = 1
     task_current            = 'deblur'          
@@ -450,9 +450,9 @@ def main():
 
     
     # experiments
-    lambdas = [lambda_*i for i in range(7,8)]
+    lambdas = [lambda_]
     for lambda_ in lambdas:
-        for zeta_i in [zeta*i for i in range(3,4)]:
+        for zeta_i in [zeta]:
             test_rho(lambda_, zeta=zeta_i, model_output_type=model_output_type)
 
 

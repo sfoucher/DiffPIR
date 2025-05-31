@@ -98,4 +98,4 @@ if __name__ == '__main__':
     mask_types = ['granular', 'spots', 'stripes', 'blocks', 'centered']
     for mask_type in mask_types:
         output_path = f'masks/{mask_type}_mask.png'
-        create_random_mask(image_size=256, mask_type=mask_type, density=0.1, output_path=output_path)
+        create_random_mask(image_size=256, mask_type=mask_type, output_path=output_path)

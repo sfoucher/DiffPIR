@@ -30,10 +30,10 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    noise_level_img         = 0/255.0       # set AWGN noise level for LR image, default: 0
+    noise_level_img         = 0 / 255.0       # set AWGN noise level for LR image, default: 0
     noise_level_model       = noise_level_img   # set noise level of model, default: 0
     model_name              = 'diffusion_ffhq_10m'  # diffusion_ffhq_10m, 256x256_diffusion_uncond; set diffusino model
-    testset_name            = 'demo_test'    # set testing set,  'imagenet_val' | 'ffhq_val'
+    testset_name            = 'test1'    # set testing set,  'imagenet_val' | 'ffhq_val'
     num_train_timesteps     = 1000
     iter_num                = 100                # set number of sampling iterations
     iter_num_U              = 1                 # set number of inner iterations, default: 1
@@ -46,8 +46,8 @@ def main():
     save_LEH                = True             # save zoomed LR, E and H images
     save_progressive        = True              # save generation process
 
-    sigma                   = max(0.001,noise_level_img)  # noise level associated with condition y
-    lambda_                 = 1.                # key parameter lambda
+    sigma                   = max(0.02, noise_level_img)  # noise level associated with condition y
+    lambda_                 = 9.                # key parameter lambda
     sub_1_analytic          = True              # use analytical solution
 
     log_process             = False
@@ -56,7 +56,7 @@ def main():
     generate_mode           = 'DiffPIR'         # DiffPIR; DPS; vanilla
     skip_type               = 'quad'            # uniform, quad
     eta                     = 0.                # eta for ddim sampling
-    zeta                    = 0.1               
+    zeta                    = 0.2
     guidance_scale          = 1.0   
 
     test_sf                 = [4]               # set scale factor, default: [2, 3, 4], [2], [3], [4]
@@ -496,10 +496,11 @@ def main():
 
             # experiments
             # lambdas = [lambda_*i for i in range(12,13)]
-            lambdas = [lambda_ * i for i in range(2, 3)]
+            # lambdas = [lambda_ * i for i in range(2, 3)]
+            lambdas = [lambda_]
             for lambda_ in lambdas:
                 #for zeta_i in [zeta*i for i in range(2,4)]:
-                for zeta_i in [0.25]:
+                for zeta_i in [zeta]:
                     test_results_ave = test_rho(lambda_, zeta=zeta_i, model_output_type=model_output_type)
 
     # ---------------------------------------

@@ -26,34 +26,34 @@ def main():
     # Preparation
     # ----------------------------------------
 
-    noise_level_img         = 0/255.0           # set AWGN noise level for LR image, default: 0
+    noise_level_img         = 0 / 255.0           # set AWGN noise level for LR image, default: 0
     noise_level_model       = noise_level_img   # set noise level of model, default: 0
     model_name              = 'diffusion_ffhq_10m'  # 256x256_diffusion_uncond, diffusion_ffhq_10m; set diffusino model
-    testset_name            = 'demo_test'        # set testing set, 'imagenet_val' | 'ffhq_val'
+    testset_name            = 'test1'        # set testing set, 'imagenet_val' | 'ffhq_val'
     num_train_timesteps     = 1000
-    iter_num                = 50              # set number of iterations
+    iter_num                = 100              # set number of iterations
     iter_num_U              = 1                 # set number of inner iterations, default: 1
     skip                    = num_train_timesteps//iter_num     # skip interval
 
-    mask_name               = 'gt_keep_masks/face/000000.png'   # mask path for loading mask img
-    load_mask               = False
+    mask_name               = 'stripes_mask.png'   # mask path for loading mask img
+    load_mask               = True
     mask_type               = 'random'  #['box', 'random', 'both', 'extreme']
     mask_len_range          = [64, 65]
     # mask_len_range = [32, 33]
     mask_prob_range         = [0.5, 0.5]
 
-    show_img                = True             # default: False
+    show_img                = False             # default: False
     save_L                  = True             # save LR image
     save_E                  = True              # save estimated image
     save_LEH                = True             # save zoomed LR, E and H images
     save_progressive        = True             # save generation process
     save_progressive_mask   = True             # save generation process
 
-    sigma                   = max(0.001,noise_level_img)  # noise level associated with condition y
-    lambda_                 = 1.                # key parameter lambda
+    sigma                   = max(0.001, noise_level_img)  # noise level associated with condition y
+    lambda_                 = 7.                # key parameter lambda
     sub_1_analytic          = True              # use analytical solution
     eta                     = 0.0               # eta for ddim samplingn  
-    zeta                    = 1.0                      
+    zeta                    = 1.
     guidance_scale          = 1.0   
     
     model_out_type          = 'pred_xstart'     # model output type: pred_x_prev; pred_xstart; epsilon; score
@@ -389,10 +389,10 @@ def main():
             logger.info('------> Average LPIPS of ({}), sigma: ({:.3f}): {:.4f}'.format(testset_name, noise_level_model, ave_lpips))
 
     # experiments
-    lambdas = [lambda_*i for i in range(1,2)]
+    lambdas = [lambda_]
     for lambda_ in lambdas:
         #for zeta_i in [0,0.3,0.8,0.9,1.0]:
-        for zeta_i in [zeta*i for i in range(1,2)]:
+        for zeta_i in [zeta]:
             test_rho(lambda_, zeta=zeta_i)
 
 if __name__ == '__main__':

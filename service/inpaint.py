@@ -37,7 +37,7 @@ def inpaint_service(mask_type='box',
     model_name = 'diffusion_ffhq_10m'  # 256x256_diffusion_uncond, diffusion_ffhq_10m; set diffusino model
     # testset_name = 'demo_test'  # set testing set, 'imagenet_val' | 'ffhq_val'
     num_train_timesteps = 1000
-    iter_num = 50  # set number of iterations
+    iter_num = 20  # set number of iterations
     iter_num_U = 1  # set number of inner iterations, default: 1
     skip = num_train_timesteps // iter_num  # skip interval
 
@@ -56,7 +56,7 @@ def inpaint_service(mask_type='box',
     save_progressive_mask = True  # save generation process
 
     sigma = max(0.001, noise_level_img)  # noise level associated with condition y
-    lambda_ = 1.  # key parameter lambda
+    lambda_ = 5.  # key parameter lambda
     sub_1_analytic = True  # use analytical solution
     eta = 0.0  # eta for ddim samplingn
     zeta = 1.0
@@ -98,7 +98,7 @@ def inpaint_service(mask_type='box',
     reduced_alpha_cumprod = torch.div(sqrt_1m_alphas_cumprod, sqrt_alphas_cumprod)  # equivalent noise sigma on image
 
     noise_model_t = utils_model.find_nearest(reduced_alpha_cumprod, 2 * noise_level_model)
-    noise_model_t = 0
+    # noise_model_t = 0
 
     noise_inti_img = 50 / 255
     t_start = utils_model.find_nearest(reduced_alpha_cumprod,
@@ -441,10 +441,9 @@ def inpaint_service(mask_type='box',
                                                                                         ave_lpips))
 
     # experiments
-    lambdas = [lambda_ * i for i in range(1, 2)]
+    lambdas = [lambda_]
     for lambda_ in lambdas:
-        # for zeta_i in [0,0.3,0.8,0.9,1.0]:
-        for zeta_i in [zeta * i for i in range(1, 2)]:
+        for zeta_i in [zeta]:
             test_rho(lambda_, zeta=zeta_i)
 
     return path_to_return

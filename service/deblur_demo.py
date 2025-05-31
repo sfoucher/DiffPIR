@@ -36,12 +36,12 @@ def deblur_service_demo(
     # Preparation
     # ----------------------------------------
 
-    noise_level_img = 12.75 / 255.0  # set AWGN noise level for LR image, default: 0
+    noise_level_img = 15 / 255.0  # set AWGN noise level for LR image, default: 0
     noise_level_model = noise_level_img  # set noise level of model, default: 0
     model_name = 'diffusion_ffhq_10m'  # diffusion_ffhq_10m, 256x256_diffusion_uncond; set diffusino model
     # testset_name = 'demo_test'  # set testing set,  'imagenet_val' | 'ffhq_val'
     num_train_timesteps = 1000
-    iter_num = 100  # set number of iterations
+    iter_num = 20  # set number of iterations
     iter_num_U = 1  # set number of inner iterations, default: 1
     skip = num_train_timesteps // iter_num  # skip interval
 
@@ -52,7 +52,7 @@ def deblur_service_demo(
     save_progressive = True  # save generation process
     border = 0
 
-    sigma = max(0.001, noise_level_img)  # noise level associated with condition y
+    sigma = max(0.05, noise_level_img)  # noise level associated with condition y
     lambda_ = 1.0  # key parameter lambda
     sub_1_analytic = True  # use analytical solution
 
@@ -69,8 +69,8 @@ def deblur_service_demo(
     use_DIY_kernel = True
     # blur_mode = 'motion'  # Gaussian; motion
     # kernel_size = 61
-    kernel_size = 11
-    kernel_std = 1.5 if blur_mode == 'Gaussian' else 0.3
+    kernel_size = 61
+    kernel_std = 1.5 if blur_mode == 'Gaussian' else 0.9
 
     sf = 1
     task_current = 'deblur'
@@ -102,7 +102,7 @@ def deblur_service_demo(
     reduced_alpha_cumprod = torch.div(sqrt_1m_alphas_cumprod, sqrt_alphas_cumprod)  # equivalent noise sigma on image
 
     noise_model_t = utils_model.find_nearest(reduced_alpha_cumprod, 2 * noise_level_model)
-    noise_model_t = 0
+    # noise_model_t = 0
 
     noise_inti_img = 50 / 255
     t_start = utils_model.find_nearest(reduced_alpha_cumprod,

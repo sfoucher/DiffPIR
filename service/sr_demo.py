@@ -35,7 +35,7 @@ def sr_service_demo(
     # Preparation
     # ----------------------------------------
 
-    noise_level_img = 0 / 255.0  # set AWGN noise level for LR image, default: 0
+    noise_level_img = 15 / 255.0  # set AWGN noise level for LR image, default: 0
     noise_level_model = noise_level_img  # set noise level of model, default: 0
     model_name = 'diffusion_ffhq_10m'  # diffusion_ffhq_10m, 256x256_diffusion_uncond; set diffusino model
     # testset_name = 'demo_test'  # set testing set,  'imagenet_val' | 'ffhq_val'
@@ -51,7 +51,7 @@ def sr_service_demo(
     save_LEH = True  # save zoomed LR, E and H images
     save_progressive = True  # save generation process
 
-    sigma = max(0.001, noise_level_img)  # noise level associated with condition y
+    sigma = max(0.05, noise_level_img)  # noise level associated with condition y
     lambda_ = 1.  # key parameter lambda
     sub_1_analytic = True  # use analytical solution
 
@@ -61,7 +61,7 @@ def sr_service_demo(
     generate_mode = 'DiffPIR'  # DiffPIR; DPS; vanilla
     skip_type = 'quad'  # uniform, quad
     eta = 0.  # eta for ddim sampling
-    zeta = 0.1
+    zeta = 0.25
     guidance_scale = 1.0
 
     test_sf = [4]  # set scale factor, default: [2, 3, 4], [2], [3], [4]

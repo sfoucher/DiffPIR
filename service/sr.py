@@ -43,7 +43,7 @@ def sr_service(
     model_name = 'diffusion_ffhq_10m'  # diffusion_ffhq_10m, 256x256_diffusion_uncond; set diffusino model
     # testset_name = 'demo_test'  # set testing set,  'imagenet_val' | 'ffhq_val'
     num_train_timesteps = 1000
-    iter_num = 100  # set number of sampling iterations
+    iter_num = 20  # set number of sampling iterations
     iter_num_U = 1  # set number of inner iterations, default: 1
     skip = num_train_timesteps // iter_num  # skip interval
     sr_mode = 'blur'  # 'blur', 'cubic' mode of sr up/down sampling
@@ -51,11 +51,11 @@ def sr_service(
     show_img = False  # default: False
     save_L = True  # save LR image
     save_E = True  # save estimated image
-    save_LEH = True  # save zoomed LR, E and H images
+    save_LEH = False  # save zoomed LR, E and H images
     save_progressive = True  # save generation process
 
     sigma = max(0.001, noise_level_img)  # noise level associated with condition y
-    lambda_ = 1.  # key parameter lambda
+    lambda_ = 9.  # key parameter lambda
     sub_1_analytic = True  # use analytical solution
 
     log_process = False
@@ -64,7 +64,7 @@ def sr_service(
     generate_mode = 'DiffPIR'  # DiffPIR; DPS; vanilla
     skip_type = 'quad'  # uniform, quad
     eta = 0.  # eta for ddim sampling
-    zeta = 0.1
+    zeta = 0.2
     guidance_scale = 1.0
 
     test_sf = [scale_factor]  # set scale factor, default: [2, 3, 4], [2], [3], [4]
@@ -506,22 +506,22 @@ def sr_service(
 
                 img_L = util.single2uint(img_L).squeeze()
 
-                # if save_LEH:
-                #     k_v = k / np.max(k) * 1.0
-                #     if n_channels == 1:
-                #         k_v = util.single2uint(k_v)
-                #     else:
-                #         k_v = util.single2uint(np.tile(k_v[..., np.newaxis], [1, 1, n_channels]))
-                #     k_v = cv2.resize(k_v, (3 * k_v.shape[1], 3 * k_v.shape[0]), interpolation=cv2.INTER_NEAREST)
-                #     img_I = cv2.resize(img_L, (sf * img_L.shape[1], sf * img_L.shape[0]),
-                #                        interpolation=cv2.INTER_NEAREST)
-                #     img_I[:k_v.shape[0], -k_v.shape[1]:, ...] = k_v
-                #     img_I[:img_L.shape[0], :img_L.shape[1], ...] = img_L
-                #     util.imshow(np.concatenate([img_I, img_E, img_H], axis=1),
-                #                 title='LR / Recovered / Ground-truth') if show_img else None
-                #     leh_path = os.path.join(E_path, img_name + '_x' + str(sf) + '_k' + str(k_index) + '_LEH' + ext)
-                #     util.imsave(np.concatenate([img_I, img_E, img_H], axis=1), leh_path)
-                #     path_to_return['leh'] = leh_path
+                if save_LEH:
+                    k_v = k / np.max(k) * 1.0
+                    if n_channels == 1:
+                        k_v = util.single2uint(k_v)
+                    else:
+                        k_v = util.single2uint(np.tile(k_v[..., np.newaxis], [1, 1, n_channels]))
+                    k_v = cv2.resize(k_v, (3 * k_v.shape[1], 3 * k_v.shape[0]), interpolation=cv2.INTER_NEAREST)
+                    img_I = cv2.resize(img_L, (sf * img_L.shape[1], sf * img_L.shape[0]),
+                                       interpolation=cv2.INTER_NEAREST)
+                    img_I[:k_v.shape[0], -k_v.shape[1]:, ...] = k_v
+                    img_I[:img_L.shape[0], :img_L.shape[1], ...] = img_L
+                    util.imshow(np.concatenate([img_I, img_E, img_H], axis=1),
+                                title='LR / Recovered / Ground-truth') if show_img else None
+                    leh_path = os.path.join(E_path, img_name + '_x' + str(sf) + '_k' + str(k_index) + '_LEH' + ext)
+                    util.imsave(np.concatenate([img_I, img_E, img_H], axis=1), leh_path)
+                    path_to_return['leh'] = leh_path
 
                 if save_L:
                     low_path = os.path.join(E_path, img_name + '_x' + str(sf) + '_k' + str(k_index) + '_LR' + ext)
@@ -549,10 +549,9 @@ def sr_service(
 
             # experiments
             # lambdas = [lambda_*i for i in range(12,13)]
-            lambdas = [lambda_ * i for i in range(2, 3)]
+            lambdas = [lambda_]
             for lambda_ in lambdas:
-                # for zeta_i in [zeta*i for i in range(2,4)]:
-                for zeta_i in [0.25]:
+                for zeta_i in [zeta]:
                     test_results_ave = test_rho(lambda_, zeta=zeta_i, model_output_type=model_output_type)
 
 

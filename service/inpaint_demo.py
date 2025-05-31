@@ -21,7 +21,7 @@ from guided_diffusion.script_util import (
 )
 
 
-def inpaint_service_demo(mask_type='random',
+def inpaint_service_demo(mask_type='box',
                          input_image_path='/Users/zhiyuzhang/Downloads/DiffPIR/testsets/demo_test/mingrui.png',
                          output_path='/Users/zhiyuzhang/Downloads/DiffPIR/results'):
 
@@ -31,9 +31,9 @@ def inpaint_service_demo(mask_type='random',
     # Preparation
     # ----------------------------------------
 
-    noise_level_img = 0 / 255.0  # set AWGN noise level for LR image, default: 0
+    noise_level_img = 15 / 255.0  # set AWGN noise level for LR image, default: 0
     noise_level_model = noise_level_img  # set noise level of model, default: 0
-    model_name = 'diffusion_ffhq_10m'  # 256x256_diffusion_uncond, diffusion_ffhq_10m; set diffusino model
+    model_name = '256x256_diffusion_uncond'  # 256x256_diffusion_uncond, diffusion_ffhq_10m; set diffusino model
     # testset_name = 'demo_test'  # set testing set, 'imagenet_val' | 'ffhq_val'
     num_train_timesteps = 1000
     iter_num = 50  # set number of iterations
@@ -54,7 +54,7 @@ def inpaint_service_demo(mask_type='random',
     save_progressive = True  # save generation process
     save_progressive_mask = True  # save generation process
 
-    sigma = max(0.001, noise_level_img)  # noise level associated with condition y
+    sigma = max(0.05, noise_level_img)  # noise level associated with condition y
     lambda_ = 1.  # key parameter lambda
     sub_1_analytic = True  # use analytical solution
     eta = 0.0  # eta for ddim samplingn
@@ -181,15 +181,13 @@ def inpaint_service_demo(mask_type='random',
         # --------------------------------
         # (2) initialize x
         # --------------------------------
-        if load_mask:
-            mask = util.imread_uint(mask_path, n_channels=n_channels).astype(bool)
-        else:
-            mask_gen = mask_generator(mask_type=mask_type, mask_len_range=mask_len_range,
-                                      mask_prob_range=mask_prob_range)
-            np.random.seed(seed=0)  # for reproducibility
-            mask = mask_gen(util.uint2tensor4(img_H)).numpy()
-            mask = np.squeeze(mask)
-            mask = np.transpose(mask, (1, 2, 0))
+
+        mask_gen = mask_generator(mask_type=mask_type, mask_len_range=mask_len_range,
+                                  mask_prob_range=mask_prob_range)
+        np.random.seed(seed=0)  # for reproducibility
+        mask = mask_gen(util.uint2tensor4(img_H)).numpy()
+        mask = np.squeeze(mask)
+        mask = np.transpose(mask, (1, 2, 0))
 
         img_L = img_H * mask / 255.  # (256,256,3)         [0,1]
 
